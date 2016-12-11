@@ -67,7 +67,7 @@ function ctdfrac_eval(fa::Function, fb::Function)
     f = fb(0)
 
     const T = typeof(f)
-    EPS = eps(T)
+    const EPS = eps(T)
 
     # adjust f0 to eps if necessary
     if abs(f) < EPS
