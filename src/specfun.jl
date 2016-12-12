@@ -12,7 +12,7 @@
 
 include("ctdfrac.jl")
 include("settings.jl")
-include("exception.jl")
+#include("exception.jl")
 
 
 #
