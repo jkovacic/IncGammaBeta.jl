@@ -81,8 +81,9 @@ function ctdfrac_eval(fa::Function, fb::Function)
     # Initially Delta should not be equal to 1
     Delta = T(0)
 
+    const TOL = SPECFUN_ITER_TOL(T)
     j = 1
-    while ( abs(Delta-1) > SPECFUN_TOL && j < SPECFUN_MAXITER )
+    while ( abs(Delta-1) > TOL && j < SPECFUN_MAXITER )
         # obtain 'aj' and 'bj'
         a = fa(j)
         b = fb(j)

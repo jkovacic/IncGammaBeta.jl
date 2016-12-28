@@ -5,9 +5,22 @@
 
 
 """
-Required precision for iterative algorithms.
+Required precision for iterative algorithms,
+it depends on type 't' that must be derived
+from AbstractFloat.
 """
-const SPECFUN_TOL = 1e-6
+function SPECFUN_ITER_TOL(t)
+
+    if ( Float64 == t )
+        retVal = 1e-12
+    elseif ( Float32 == t )
+        retVal = 1f-6
+    else   # t == Float16
+        retVal = eps(Float16)
+    end
+
+    return retVal
+end
 
 
 

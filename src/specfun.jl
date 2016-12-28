@@ -264,9 +264,10 @@ function incGamma{T<:AbstractFloat}(a::T, x::T, upper::Bool, reg::Bool)
         term = ginc
 
         # Proceed the Taylor series for i = 1, 2, 3... until it converges:
+        const TOL = SPECFUN_ITER_TOL(T)
         at = a
         i = 1
-        while ( abs(term) > SPECFUN_TOL && i<SPECFUN_MAXITER )
+        while ( abs(term) > TOL && i<SPECFUN_MAXITER )
             at += T(1)
             term *= (x / at)
             ginc += term
@@ -356,7 +357,8 @@ function incGamma{T<:AbstractFloat}(a::Complex{T}, x::Complex{T}, upper::Bool, r
     term = ginc
 
     # proceed the series until it converges
-    const TOL2 = SPECFUN_TOL * SPECFUN_TOL
+    const TOL = SPECFUN_ITER_TOL(T)
+    const TOL2 = TOL * TOL
     i = 0
     while ( abs2(term) > TOL2 && i < SPECFUN_MAXITER )
         at += T(1)
@@ -602,7 +604,8 @@ function incBeta{T<:AbstractFloat}(a::Complex{T}, b::Complex{T}, x::Complex{T}, 
     bt = -b;
 
     # proceed the series until it converges
-    const TOL2 = SPECFUN_TOL * SPECFUN_TOL
+    const TOL = SPECFUN_ITER_TOL(T)
+    const TOL2 = TOL * TOL
     i = 1
     while ( abs2(term) > TOL2 && i <= SPECFUN_MAXITER )
         at += T(1)
@@ -679,13 +682,13 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_upper(2.0, 0.5)
-0.9097960517658588
+0.9097959895689625
 
 julia> inc_gamma_upper(2.0, 5.0)
 0.040427681994512805
 
 julia> inc_gamma_upper(2.0+im, 1.0-im)
-0.294740560104593 + 1.1235453000068967im
+0.294740622917453 + 1.1235452373416361im
 ```
 """
 function inc_gamma_upper(a, x)
@@ -725,13 +728,13 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_lower(3.0, 2.5)
-0.9123736299270637
+0.9123737682332481
 
 julia> inc_gamma_lower(1.5, 4.0)
-0.8454501069992294
+0.8454501129849447
 
 julia> inc_gamma_lower(1.4-0.7im, 0.3+0.1im)
--0.016291212634531548 + 0.1305217380308644im
+-0.016291214690464333 + 0.13052172604872464im
 ```
 """
 function inc_gamma_lower(a, x)
@@ -771,10 +774,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_upper_reg(3.0, 0.5)
-0.9856123254685195
+0.9856123220330416
 
 julia> inc_gamma_upper_reg(-1.1+0.8im, 2.4-1.3im)
-0.001971552504340772 + 0.016252454678230718im
+0.001971575402883159 + 0.016252537792016058im
 ```
 """
 function inc_gamma_upper_reg(a, x)
@@ -814,10 +817,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_lower_reg(1.5, 3.2)
-0.9063091948884513
+0.9063092095923061
 
 julia> inc_gamma_lower_reg(-3.2-1.4im, -2.0-0.5im)
-0.23972825708627568 + 0.4357814237699705im
+0.23971636700888468 + 0.4357835552823487im
 ```
 """
 function inc_gamma_lower_reg(a, x)
@@ -859,13 +862,13 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_beta_lower(2.0, 5.0, 0.2)
-0.011487999926398719
+0.01148800000000001
 
 julia> inc_beta_lower(2.0, 5.0, 0.7)
 0.032968833333333336
 
 julia> inc_beta_lower(2.0-im, 3.0+im, 0.1+0.1im)
--0.014279981061424203 - 0.010562833267973058im
+-0.014279979073458599 - 0.010562832806049189im
 ```
 """
 function inc_beta_lower(a, b, x)
@@ -913,7 +916,7 @@ julia> inc_beta_upper(1.0, 2.0, 0.82)
 0.01620000000000001
 
 julia> inc_beta_upper(-1.2+im, -3.0-im, 0.1-0.2im)
-35.01301965887684 + 12.573969351233654im
+35.013019655187826 + 12.573969337465748im
 ```
 """
 function inc_beta_upper(a, b, x)
@@ -955,10 +958,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_beta_lower_reg(3.0, 2.0, 0.12)
-0.006289919999999998
+0.00628992
 
 julia> inc_beta_lower_reg(2.2-0.2im, 1.4+0.7im, -0.3+0.4im)
-0.8221304789832569 - 0.40178180311947265imm
+0.8221304290364263 - 0.40178180061491814im
 ```
 """
 function inc_beta_lower_reg(a, b, x)
@@ -1003,7 +1006,7 @@ julia> inc_beta_upper_reg(4.0, 1.0, 0.32)
 0.98951424
 
 julia> inc_beta_upper_reg(-3.8-0.7im, -3.4+2.7im, -0.6-0.1im)
-0.0010989971419782549 + 0.0021282684016619385im
+0.0010989969710151117 + 0.0021282694661565148im
 ```
 """
 function inc_beta_upper_reg(a, b, x)
@@ -1237,10 +1240,11 @@ function invIncGamma{T<:AbstractFloat}(a::T, g::T, upper::Bool, reg::Bool)
     # (%o1)  (x^a-1*%e^-x)/gamma(a)
     #
 
+    const TOL = SPECFUN_ITER_TOL(T) 
     xn = T(0)
     f = inc_gamma_lower_reg(a, x) - p
     i = 0
-    while ( abs(f) > SPECFUN_TOL && i < SPECFUN_MAXITER )
+    while ( abs(f) > TOL && i < SPECFUN_MAXITER )
         xn = x - f * G * exp(x) / (x^(a-T(1)))
 
         # x must not go negative!
@@ -1447,8 +1451,9 @@ function invIncBeta{T<:AbstractFloat}(a::T, b::T, y::T, lower::Bool, reg::Bool)
     xn = T(0)
     f = inc_beta_lower_reg(a, b, x) - p
 
+    const TOL = SPECFUN_ITER_TOL(T)
     i = 0
-    while ( abs(f) > SPECFUN_TOL && i < SPECFUN_MAXITER )
+    while ( abs(f) > TOL && i < SPECFUN_MAXITER )
         xn = x - f * B / (x^(a-T(1)) * (T(1)-x)^(b-T(1)) )
 
         # x must not go negative or beyond 1!
@@ -1508,10 +1513,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_lower_inv(0.24, 0.94)
-0.0020243625046595295
+0.002024362637442518
 
 julia> inc_gamma_lower_inv(2.8, 0.17)
-0.9873931016522355
+0.9873918720287759
 ```
 """
 function inc_gamma_lower_inv(a, g)
@@ -1552,10 +1557,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_upper_inv(0.65, 0.86)
-0.21736643202568437
+0.21736651483074873
 
 julia> inc_gamma_upper_inv(3.5, 0.43)
-5.609013667436654
+5.609013631489573
 ```
 """
 function inc_gamma_upper_inv(a, g)
@@ -1596,10 +1601,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_lower_reg_inv(0.2, 0.3)
-0.0015877902675184167
+0.0015877907243440615
 
 julia> inc_gamma_lower_reg_inv(3.0, 0.7)
-3.6155679939137437
+3.6155676658661333
 ```
 """
 function inc_gamma_lower_reg_inv(a, g)
@@ -1640,10 +1645,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_gamma_upper_reg_inv(0.3, 0.4)
-0.14125250515251847
+0.1412525036310711
 
 julia> inc_gamma_upper_reg_inv(5.2, 0.82)
-3.129677423009873
+3.1296773937114972
 ```
 """
 function inc_gamma_upper_reg_inv(a, g)
@@ -1685,10 +1690,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_beta_lower_inv(2.8, 0.3, 2.0)
-0.9997335694367433
+0.9997335668051313
 
 julia> inc_beta_lower_inv(1.1, 1.3, 0.4)
-0.5190110415182052
+0.5190110112035177
 ```
 """
 function inc_beta_lower_inv(a, b, y)
@@ -1730,10 +1735,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_beta_upper_inv(0.4, 0.5, 1.8)
-0.41086936325882417
+0.41086943388583214
 
 julia> inc_beta_upper_inv(1.7, 1.1, 0.2)
-0.720552685909532
+0.7205525719752999
 ```
 """
 function inc_beta_upper_inv(a, b, y)
@@ -1775,10 +1780,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_beta_lower_reg_inv(0.3, 0.2, 0.7)
-0.9785534148021483
+0.9785534149620168
 
 julia> inc_beta_lower_reg_inv(2.4, 3.5, 0.6)
-0.44942826252472956
+0.44942828803639806
 ```
 """
 function inc_beta_lower_reg_inv(a, b, y)
@@ -1820,10 +1825,10 @@ when the internal algorithm does not converge.
 
 ```jldoctest
 julia> inc_beta_upper_reg_inv(0.9, 1.5, 0.7)
-0.18163313152662056
+0.18163313417789242
 
 julia> inc_beta_upper_reg_inv(1.9, 2.7, 0.25)
-0.5648300078293456
+0.5648299809468559
 ```
 """
 function inc_beta_upper_reg_inv(a, b, y)

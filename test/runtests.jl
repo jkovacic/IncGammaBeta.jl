@@ -34,8 +34,8 @@ print_with_color(:blue, "Running tests...\n")
 @test mrd( inc_gamma_lower_reg(1.5, 3.2) ) == 0.906309
 @test mrd( inc_gamma_upper(2.0+im, 1.0-im) ) == 0.294741 + 1.123545im
 @test mrd( inc_gamma_lower(1.4-0.7im, 0.3+0.1im) ) == -0.016291 + 0.130522im
-@test mrd( inc_gamma_upper_reg(-1.1+0.8im, 2.4-1.3im) ) == 0.001972 + 0.016252im
-@test mrd( inc_gamma_lower_reg(-3.2-1.4im, -2.0-0.5im) ) == 0.239728 + 0.435781im
+@test mrd( inc_gamma_upper_reg(-1.1+0.8im, 2.4-1.3im) ) == 0.001972 + 0.016253im
+@test mrd( inc_gamma_lower_reg(-3.2-1.4im, -2.0-0.5im) ) == 0.239716 + 0.435784im
 
 @test mrd( inc_beta_lower(2.0, 5.0, 0.2) ) == 0.011488
 @test mrd( inc_beta_lower(2.0, 5.0, 0.7) ) == 0.032969
@@ -53,8 +53,8 @@ print_with_color(:blue, "Running tests...\n")
 @test mrd( inc_gamma_upper_reg_inv(0.3, 0.4) ) == 0.141253
 @test mrd( inc_gamma_upper_reg_inv(5.2, 0.82) ) == 3.129677
 @test mrd( inc_gamma_lower_inv(0.24, 0.94) ) == 0.002024
-@test mrd( inc_gamma_lower_inv(2.8, 0.17) ) == 0.987393
-@test mrd( inc_gamma_upper_inv(0.65, 0.86) ) == 0.217366
+@test mrd( inc_gamma_lower_inv(2.8, 0.17) ) == 0.987392
+@test mrd( inc_gamma_upper_inv(0.65, 0.86) ) == 0.217367
 @test mrd( inc_gamma_upper_inv(3.5, 0.43) ) == 5.609014
 
 @test mrd( inc_beta_lower_reg_inv(0.3, 0.2, 0.7) ) == 0.978553
