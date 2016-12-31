@@ -18,7 +18,7 @@ include("exception.jl")
 
 
 """
-A Julia package with function that implement incomplete gamma and beta functions
+A Julia package with functions that implement incomplete gamma and beta functions
 of all kinds (upper and lower, regularized and unegularized). All functions except
 inverse ones also support complex arguments.
 
