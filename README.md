@@ -3,7 +3,7 @@ A Julia package with functions that implement incomplete gamma and beta function
 of all kinds (upper and lower, regularized and unregularized). All functions except
 inverse ones also support complex arguments.
 
-The package is written entirely in Julia and does not require any 3rd party libraries
+The package is written entirely in Julia and does not require any third party libraries
 or additional Julia packages.
 
 ##License
