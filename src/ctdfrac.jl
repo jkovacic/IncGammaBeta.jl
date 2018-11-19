@@ -66,8 +66,8 @@ function ctdfrac_eval(fa::Function, fb::Function)
     # f0 = b0
     f = fb(0)
 
-    const T = typeof(f)
-    const EPS = eps(T)
+    T = typeof(f)
+    EPS = eps(T)
 
     # adjust f0 to eps if necessary
     if abs(f) < EPS
@@ -81,7 +81,7 @@ function ctdfrac_eval(fa::Function, fb::Function)
     # Initially Delta should not be equal to 1
     Delta = T(0)
 
-    const TOL = SPECFUN_ITER_TOL(T)
+    TOL = SPECFUN_ITER_TOL(T)
     j = 1
     while ( abs(Delta-1) > TOL && j < SPECFUN_MAXITER )
         # obtain 'aj' and 'bj'
