@@ -1,5 +1,6 @@
 name = "IncGammaBeta"
 uuid = "5087d2c0-5ad2-51de-b1ef-eaf82f0743fd"
+version = "0.1.0"
 
 [deps]
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
