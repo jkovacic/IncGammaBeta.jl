@@ -1,0 +1,15 @@
+name = "IncGammaBeta"
+uuid = "5087d2c0-5ad2-51de-b1ef-eaf82f0743fd"
+
+[deps]
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+
+[compat]
+julia = "≥ 1.0.0"
+
+[extras]
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test", "Printf"]
