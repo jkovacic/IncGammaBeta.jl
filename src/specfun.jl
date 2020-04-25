@@ -44,7 +44,7 @@ include("settings.jl")
 # To support regularized beta function on complex numbers as well,
 # this convenience function has been introduced.
 # TODO: the function may be removed when Julia 0.4 is no longer supported.
-function betac{T<:AbstractFloat}(x::Complex{T}, y::Complex{T})
+function betac(x::Complex{T}, y::Complex{T}) where {T<:AbstractFloat}
 
     #
     # It can be shown that B(x,y) can be expressed with gamma
@@ -55,8 +55,8 @@ function betac{T<:AbstractFloat}(x::Complex{T}, y::Complex{T})
     #               G(x+y)
     #
 
-    const EPS2 = eps(T) * eps(T)
-    const gxy = gamma(x + y);
+    EPS2 = eps(T) * eps(T)
+    gxy = gamma(x + y);
 
     # handle a very unlikely occassion that G(x,y) gets very close to 0:
     if ( abs2(gxy) < EPS2 )
@@ -165,9 +165,9 @@ end
 # not defined for any input argument, or `NoConvergenceError`
 # when the internal algorithm does not converge.
 #
-function incGamma{T<:AbstractFloat}(a::T, x::T, upper::Bool, reg::Bool)
+function incGamma(a::T, x::T, upper::Bool, reg::Bool) where {T<:AbstractFloat}
 
-    const EPS = eps(T)
+    EPS = eps(T)
     # sanity check:
     if ( a < EPS || x < EPS )
         throw(SpecfunUndefinedError)
@@ -234,7 +234,7 @@ function incGamma{T<:AbstractFloat}(a::T, x::T, upper::Bool, reg::Bool)
         #
 
         fa, fb = inc_gamma_ctdfrac_closure(a, x)
-        const G = ( true==upper && false==reg ? T(0) : gamma(a) )
+        G = ( true==upper && false==reg ? T(0) : gamma(a) )
 
         ginc /= ctdfrac_eval(fa, fb)
 
@@ -257,14 +257,14 @@ function incGamma{T<:AbstractFloat}(a::T, x::T, upper::Bool, reg::Bool)
         #
         # In this case evaluate the lower gamma function as described above.
         #
-        const G = ( false==upper && false==reg ? T(0) : gamma(a) )
+        G = ( false==upper && false==reg ? T(0) : gamma(a) )
 
         # Initial term of the Taylor series at i=0:
         ginc /= a
         term = ginc
 
         # Proceed the Taylor series for i = 1, 2, 3... until it converges:
-        const TOL = SPECFUN_ITER_TOL(T)
+        TOL = SPECFUN_ITER_TOL(T)
         at = a
         i = 1
         while ( abs(term) > TOL && i<SPECFUN_MAXITER )
@@ -318,7 +318,7 @@ end
 # not defined for any input argument, or `NoConvergenceError`
 # when the internal algorithm does not converge.
 #
-function incGamma{T<:AbstractFloat}(a::Complex{T}, x::Complex{T}, upper::Bool, reg::Bool)
+function incGamma(a::Complex{T}, x::Complex{T}, upper::Bool, reg::Bool) where {T<:AbstractFloat}
 
     #
     # The lower incomplete gamma function can be expanded into:
@@ -341,14 +341,14 @@ function incGamma{T<:AbstractFloat}(a::Complex{T}, x::Complex{T}, upper::Bool, r
     # by dividing g(a,x) or G(a,x) by G(a).
     #
 
-    const EPS2 = eps(T) * eps(T)
+    EPS2 = eps(T) * eps(T)
     # If 'a' equals zero, division by zero would occur
     if ( abs2(a) < EPS2 )
         throw(SpecfunUndefinedError)
     end
 
     # G = gamma(a) or (0,0) when the value is not used
-    const G = ( true==reg || true==upper ? gamma(a) : Complex{T}(0) )
+    G = ( true==reg || true==upper ? gamma(a) : Complex{T}(0) )
 
     at = a
 
@@ -357,8 +357,8 @@ function incGamma{T<:AbstractFloat}(a::Complex{T}, x::Complex{T}, upper::Bool, r
     term = ginc
 
     # proceed the series until it converges
-    const TOL = SPECFUN_ITER_TOL(T)
-    const TOL2 = TOL * TOL
+    TOL = SPECFUN_ITER_TOL(T)
+    TOL2 = TOL * TOL
     i = 0
     while ( abs2(term) > TOL2 && i < SPECFUN_MAXITER )
         at += T(1)
@@ -422,9 +422,9 @@ end
 # when the internal algorithm does not converge.
 #
 
-function incBeta{T<:AbstractFloat}(a::T, b::T, x::T, lower::Bool, reg::Bool)
+function incBeta(a::T, b::T, x::T, lower::Bool, reg::Bool) where {T<:AbstractFloat}
 
-    const EPS = eps(T)
+    EPS = eps(T)
 
     # sanity check
     if ( a < EPS || b < EPS || x < T(0) || x > T(1) )
@@ -463,15 +463,15 @@ function incBeta{T<:AbstractFloat}(a::T, b::T, x::T, lower::Bool, reg::Bool)
     #
 
     # checks if x is "large", i.e. greater than the threshold defined above:
-    const xlarge = (x > ( (a+T(1)) / (a+b+T(2)) ) )
+    xlarge = (x > ( (a+T(1)) / (a+b+T(2)) ) )
 
     # If x is large, the parameters must be swapped
-    const xn = ( false==xlarge ? x :  T(1)-x )
-    const an = ( false==xlarge ? a : b )
-    const bn = ( false==xlarge ? b : a )
+    xn = ( false==xlarge ? x :  T(1)-x )
+    an = ( false==xlarge ? a : b )
+    bn = ( false==xlarge ? b : a )
 
     # B = B(a,b) or 0 when the value is not used
-    const B = (
+    B = (
         true==reg || (false==xlarge && false==lower) || (true==xlarge  && true==lower) ?
         beta(a, b) : T(0) )
 
@@ -557,7 +557,7 @@ end
 # not defined for any input argument, or `NoConvergenceError`
 # when the internal algorithm does not converge.
 #
-function incBeta{T<:AbstractFloat}(a::Complex{T}, b::Complex{T}, x::Complex{T}, lower::Bool, reg::Bool)
+function incBeta(a::Complex{T}, b::Complex{T}, x::Complex{T}, lower::Bool, reg::Bool) where {T<:AbstractFloat}
 
     #
     # Series expansion of the incomplete beta function as explained at:
@@ -580,7 +580,7 @@ function incBeta{T<:AbstractFloat}(a::Complex{T}, b::Complex{T}, x::Complex{T}, 
     #
     #
 
-    const EPS2 = eps(T) * eps(T)
+    EPS2 = eps(T) * eps(T)
 
     # Division by zero will occur if a==0
     if ( abs2(a) < EPS2 )
@@ -594,7 +594,7 @@ function incBeta{T<:AbstractFloat}(a::Complex{T}, b::Complex{T}, x::Complex{T}, 
     end
 
     # B = B(a,b) or (0,0) when the value is not used
-    const B = ( true==reg || false==lower ? betac(a, b) : Complex{T}(0) )
+    B = ( true==reg || false==lower ? betac(a, b) : Complex{T}(0) )
 
     # The first term of the series
     binc = (x^a) / a
@@ -604,8 +604,8 @@ function incBeta{T<:AbstractFloat}(a::Complex{T}, b::Complex{T}, x::Complex{T}, 
     bt = -b;
 
     # proceed the series until it converges
-    const TOL = SPECFUN_ITER_TOL(T)
-    const TOL2 = TOL * TOL
+    TOL = SPECFUN_ITER_TOL(T)
+    TOL2 = TOL * TOL
     i = 1
     while ( abs2(term) > TOL2 && i <= SPECFUN_MAXITER )
         at += T(1)
@@ -1052,15 +1052,15 @@ function as26_2_22(p)
 
     T = typeof(p)
 
-    const pp = ( p>= T(0.5) ? T(1) - p : p )
+    pp = ( p>= T(0.5) ? T(1) - p : p )
 
-    const t = sqrt(T(-2) * log(pp) )
+    t = sqrt(T(-2) * log(pp) )
 
     # [Abramowitz & Stegun], section 26.2.22:
-    const a0 = T(2.30753)
-    const a1 = T(0.27061)
-    const b0 = T(0.99229)
-    const b1 = T(0.04481)
+    a0 = T(2.30753)
+    a1 = T(0.27061)
+    b0 = T(0.99229)
+    b1 = T(0.04481)
 
     x = t - (a0 + a1 * t) / (T(1) + t * (b0 + b1 * t))
     if ( p > T(0.5) )
@@ -1090,9 +1090,9 @@ end
 # not defined for any input argument, or `NoConvergenceError`
 # when the internal algorithm does not converge.
 #
-function invIncGamma{T<:AbstractFloat}(a::T, g::T, upper::Bool, reg::Bool)
+function invIncGamma(a::T, g::T, upper::Bool, reg::Bool) where {T<:AbstractFloat}
 
-    const EPS = eps(T)
+    EPS = eps(T)
 
     # sanity check
     if ( a < EPS || g < T(0) )
@@ -1110,7 +1110,7 @@ function invIncGamma{T<:AbstractFloat}(a::T, g::T, upper::Bool, reg::Bool)
     # The algorithm is proposed in [Numerical Recipes], section 6.2.1.
     #
 
-    const G = gamma(a)
+    G = gamma(a)
 
     p = g;
     if ( false == reg )
@@ -1186,10 +1186,10 @@ function invIncGamma{T<:AbstractFloat}(a::T, g::T, upper::Bool, reg::Bool)
         #       hence the first expression is always defined.
         #
 
-        const c1 = T(0.253)
-        const c2 = T(0.12)
-        const Pa = a * (c1 + c2 * a)
-        const cpa = T(1) - Pa
+        c1 = T(0.253)
+        c2 = T(0.12)
+        Pa = a * (c1 + c2 * a)
+        cpa = T(1) - Pa
 
         x = ( p < cpa ?
                  (p / cpa)^ (T(1) / a) :
@@ -1240,7 +1240,7 @@ function invIncGamma{T<:AbstractFloat}(a::T, g::T, upper::Bool, reg::Bool)
     # (%o1)  (x^a-1*%e^-x)/gamma(a)
     #
 
-    const TOL = SPECFUN_ITER_TOL(T) 
+    TOL = SPECFUN_ITER_TOL(T) 
     xn = T(0)
     f = inc_gamma_lower_reg(a, x) - p
     i = 0
@@ -1284,9 +1284,9 @@ end
 # not defined for any input argument, or `NoConvergenceError`
 # when the internal algorithm does not converge.
 #
-function invIncBeta{T<:AbstractFloat}(a::T, b::T, y::T, lower::Bool, reg::Bool)
+function invIncBeta(a::T, b::T, y::T, lower::Bool, reg::Bool) where {T<:AbstractFloat}
 
-    const EPS = eps(T)
+    EPS = eps(T)
 
     # sanity check
     if ( a < EPS || b < EPS || y < T(0) )
@@ -1304,7 +1304,7 @@ function invIncBeta{T<:AbstractFloat}(a::T, b::T, y::T, lower::Bool, reg::Bool)
     # The algorithm is proposed in [Numerical Recipes], section 6.4.
     #
 
-    const B = beta(a, b)
+    B = beta(a, b)
 
     p = y
 
@@ -1382,12 +1382,12 @@ function invIncBeta{T<:AbstractFloat}(a::T, b::T, y::T, lower::Bool, reg::Bool)
         # [Abramowitz & Stegun], section 26.2.22:
         x = as26_2_22(p)
 
-        const lambda = (x*x - T(3)) / T(6)
-        const ta = T(1) / ( T(2) * a - T(1) )
-        const tb = T(1) / ( T(2) * b - T(1) )
-        const h = T(2) / (ta + tb)
+        lambda = (x*x - T(3)) / T(6)
+        ta = T(1) / ( T(2) * a - T(1) )
+        tb = T(1) / ( T(2) * b - T(1) )
+        h = T(2) / (ta + tb)
 
-        const w = x * sqrt(h + lambda) / h - (tb - ta) *
+        w = x * sqrt(h + lambda) / h - (tb - ta) *
                     (lambda + T(5) / T(6) - T(2) / (T(3) * h) )
 
         x = a / (a + b * exp(T(2) * w))
@@ -1419,9 +1419,9 @@ function invIncBeta{T<:AbstractFloat}(a::T, b::T, y::T, lower::Bool, reg::Bool)
         #          \/
         #
 
-        const ta = ( (a/(a+b))^a ) / a
-        const tb = ( (b/(a+b))^b ) / b
-        const S = ta + tb
+        ta = ( (a/(a+b))^a ) / a
+        tb = ( (b/(a+b))^b ) / b
+        S = ta + tb
 
         x = ( p < ta/S ?   (p*S*a)^(T(1)/a) :  (T(1)-p*S*b)^(T(1)/b) )
     end
@@ -1451,7 +1451,7 @@ function invIncBeta{T<:AbstractFloat}(a::T, b::T, y::T, lower::Bool, reg::Bool)
     xn = T(0)
     f = inc_beta_lower_reg(a, b, x) - p
 
-    const TOL = SPECFUN_ITER_TOL(T)
+    TOL = SPECFUN_ITER_TOL(T)
     i = 0
     while ( abs(f) > TOL && i < SPECFUN_MAXITER )
         xn = x - f * B / (x^(a-T(1)) * (T(1)-x)^(b-T(1)) )

@@ -13,18 +13,19 @@
 
 
 using IncGammaBeta
-using Base.Test
+using Test
+using Printf
 
 
 # Round all results to 'i' decimal places:
 function my_round(i::Integer)
-    return x -> round(x, i)
+    return x -> round(x, digits=i)
 end
 
 mrd = my_round(6)
 
 
-print_with_color(:blue, "Running tests...\n")
+printstyled("Running tests...\n", color=:blue)
 
 @test mrd( inc_gamma_upper(2.0, 0.5) ) == 0.909796
 @test mrd( inc_gamma_upper(2.0, 5.0) ) == 0.040428
@@ -67,4 +68,4 @@ print_with_color(:blue, "Running tests...\n")
 @test mrd( inc_beta_upper_inv(1.7, 1.1, 0.2) ) == 0.720553
 
 
-print_with_color(:blue, "Tests completed successfully.\n")
+printstyled("Tests completed successfully.\n", color=:blue)

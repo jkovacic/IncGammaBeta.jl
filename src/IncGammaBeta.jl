@@ -12,6 +12,8 @@ export inc_beta_lower, inc_beta_upper, inc_beta_lower_reg, inc_beta_upper_reg
 export inc_beta_lower_inv, inc_beta_upper_inv, inc_beta_lower_reg_inv, inc_beta_upper_reg_inv
 export SpecfunUndefinedError, NoConvergenceError
 
+using SpecialFunctions
+
 include("specfun.jl")
 include("exception.jl")
 

@@ -6,7 +6,7 @@
 """
 Exception thrown when any input argument is not valid.
 """
-type SpecfunUndefinedError <: Exception end
+struct SpecfunUndefinedError <: Exception end
 
 
 
@@ -14,4 +14,4 @@ type SpecfunUndefinedError <: Exception end
 """
 Exception thrown when the internal algorithm does not converge.
 """
-type NoConvergenceError <: Exception end
+struct NoConvergenceError <: Exception end
